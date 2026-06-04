@@ -8,15 +8,15 @@ public class Main
     private int currentMonth;
     private int currentDay;
     private int currentYear;
-   
-   
+    
+    
     public static void main(String[] args)
-    {  
-        Main app = new Main();
+    {   
+        Main app = new Main(); 
         Scanner scan = new Scanner(System.in);
-       
-       
-       
+        
+        
+        
         //Temp account
          Account avery = new Account("Costco", "averyl", "avery@gmail.com", "Av3ry_");
          //Password testing
@@ -29,44 +29,44 @@ public class Main
         } else {
             System.out.println(avery.generateStrongPassword());
         }
-       
-       
-       
+        
+        
+        
         System.out.println("=-=-=-=-=-=-= Welcome =-=-=-=-=-=-=");
-       
+        
         //Sets the current date
         app.updateDate(scan);
-       
+        
         System.out.println("Please select option: \n" +
         "1\tAccount Menu\n" + "2\tSubscription Menu\n" + "3\tUpdate Date\n");
         int input = scan.nextInt();
         scan.nextLine();
-       
+        
         while (input != 1 && input != 2 && input != 3){
             System.out.println("INVALID option. Try again!");
             input = scan.nextInt();
         }
         if (input == 1){
-            app.accountMenu(scan);
+            app.accountMenu(scan); 
         } else if (input == 2){
             //app.subscriptionMenu(scan);
         } else if (input == 3){
             app.updateDate(scan);
         }
-       
+        
     }
-   
+    
     public void accountMenu(Scanner scan){
         boolean running = true;
-       
+        
         while(running){
-            System.out.println("\n-----------Account Menu-----------\n" +
+            System.out.println("\n-----------Account Menu-----------\n" + 
             "What would you like to do?\n");
             System.out.println("1 Add New Account");
             System.out.println("2 Search, Update, or Delete Accounts");
             System.out.println("3 List Dashboard Reports");
             System.out.println("4 Return to Main Menu");
-           
+            
             int input = scan.nextInt();
             scan.nextLine();
             while (input != 1 && input != 2 && input != 3 && input != 4){
@@ -83,7 +83,7 @@ public class Main
                 String newEmail = scan.nextLine();
                 System.out.println("Enter Password: ");
                 String newPass = scan.nextLine();
-               
+                
                 if(!manager.checkExistingAccount(newService, newEmail)){
                     Account newAccount = new Account(newService, newUser, newEmail, newPass);
                     manager.addAccount(newAccount);
@@ -102,25 +102,19 @@ public class Main
             }
         }
     }
-   
+    
     public void searchUpdateDeleteMenu(Scanner scan){
         boolean running = true;
-       
+        
         while(running){
-            System.out.println("\nSelect an option");
+            System.out.println("\nFind accounts by Email/Phone or Service to view info");
             System.out.println("1 List Accounts by Email/Phone");
             System.out.println("2 List Accounts by Service");
             System.out.println("3 Go Back");
-           
-            int input = scan.nextInt();
-            scan.nextLine();
-            while (input != 1 && input != 2 && input != 3){
-                System.out.println("INVALID option. Try again!");
-                input = scan.nextInt();
-                scan.nextLine();
-            }
-            if (input == 1){
-               
+            
+            String input = scan.nextLine();
+            if (input.equals("1")){
+                
                 //Lists accounts by input email/phone
                 System.out.println("Please enter email or phone");
                 String emailInput = scan.nextLine();
@@ -141,9 +135,9 @@ public class Main
                         viewAccountInfo(scan, availableAccounts.get(input-1));
                     }
                 }
-               
-            } else if (input == 2){
-               
+                
+            } else if (input.equals("2")){
+                
                 //Lists accounts by service name
                 System.out.println("Please enter name of service");
                 String serviceInput = scan.nextLine();
@@ -165,34 +159,94 @@ public class Main
                         viewAccountInfo(scan, availableAccounts.get(input-1));
                     }
                 }
-               
+                
             } else if (input == 3){
                 running = false;
             }
         }
     }
-   
+    
     public void viewAccountInfo(Scanner scan, Account selectedAccount){
-        System.out.println("\n============= Viewing " + selectedAccount.getUsername() + "'s Info =============");
-        System.out.println("Service: " + selectedAccount.getServiceName());
-        System.out.println("Username: " + selectedAccount.getUsername());
-        System.out.println("Email/Phone: " + selectedAccount.getEmailOrPhone());
-        System.out.println("Password: " + selectedAccount.getPassword());
-        System.out.println("\nWhat would you like to do?" +
-        "\n1\tChange Service" + "\n2\tChange Username" + "\n3\tChange Email" +
-        "\n4\tChange Password" + "\n5\tGenerate Strong Password" + "\n6\tDelete Account" + "\n7\tGo Back");
-       
-       
-       
+        boolean viewing = true;
+        
+        while (viewing){
+            System.out.println("\n============= Viewing " + selectedAccount.getUsername() + "'s Info =============");
+            System.out.println("Service: " + selectedAccount.getServiceName());
+            System.out.println("Username: " + selectedAccount.getUsername());
+            System.out.println("Email/Phone: " + selectedAccount.getEmailOrPhone());
+            System.out.println("Password: " + selectedAccount.getPassword());
+            System.out.println("\nWhat would you like to do?" + 
+            "\n1\tChange Username" + "\n2\tChange Email/Phone" +
+            "\n3\tChange Password" + "\n4\tDelete Account" + "\n5\tGo Back");
+            
+            int input = scan.nextInt();
+            scan.nextLine();
+            
+            if(input == 1){
+                System.out.println("Enter the new username: ");
+                selectedAccount.setUsername(scan.nextLine());
+                System.out.println("Success! Your username has been changed.");
+            } else if(input == 2) {
+                System.out.println("Enter the new email/phone: ");
+                selectedAccount.setEmail(scan.nextLine());
+                System.out.println("Success! Your email/phone number has been changed.");
+            } else if(input == 3){
+                
+                boolean isStrong = false;
+                while (!isStrong) {
+                    System.out.println("(E) \tEnter custom password \n(G) \tGenerate secure password: ");
+                    String choice = scan.nextLine();
+                    if (choice.equalsIgnoreCase("E")){
+                        System.out.println("Please enter password." + "Must be at least 12 characters. "
+                        "Must have at least 1 upper case, lower case, number, and special character. ");
+                        
+                        String passInput = scan.nextLine();
+                        if(selectedAccount.checkStrength(passInput)){
+                            selectedAccount.setPassword(passInput);
+                            System.out.println("Success! Your password has been changed.");
+                            isStrong = true;
+                        } else {
+                                System.out.println("Weak password. Are you sure to want to continue? (yes/no)");
+                                    String yesNo = scan.nextLine();
+                                    if (yesNo.equalsIgnoreCase("yes")) {
+                                        isStrong = true;
+                                    } else if (yesNo.equalsIgnoreCase("no")){
+                                        System.out.println("Please select option");
+                                    }
+                        }
+                    } else if (choice.equalsIgnoreCase("G")) {
+                        System.out.println("Generating secure password");
+                        String generatedPass = selectedAccount.generateStrongPassword();
+                        selectedAccount.setPassword(generatedPass);
+                        System.out.println("Success! Your new password is " + generatedPass);
+                        isStrong = true;
+                    }
+                }
+                
+            } else if(input == 4) {
+                System.out.println("Are you sure you want to delete? (yes/no)");
+                String yesNo = scan.nextLine();
+                if (yesNo.equalsIgnoreCase("yes")) {
+                    manager.deleteAccount(selectedAccount);
+                    System.out.println("Account deleted successfully.");
+                    viewing = false;
+                } else if (yesNo.equalsIgnoreCase("no")){
+                    System.out.println("No changes made.");
+                }
+            } else if(input == 5) {
+                viewing = false;
+            }
+        }
+        
     }
-   
+    
     public void subscriptionMenu(Scanner scan){
         //Not implemented
     }
-   
+    
     public boolean isValidDate(int month, int day, int year) {
         int maxDays = 31;
-       
+        
         if (month == 4 || month == 6 || month == 9 || month == 11){
             maxDays = 30;
         } else if (month == 2){
@@ -202,41 +256,59 @@ public class Main
                 maxDays = 28;
             }
         }
-        return (month >= 1 && month <= 12 && day >= 1 && day <= maxDays &&
+        return (month >= 1 && month <= 12 && day >= 1 && day <= maxDays && 
         year >= 1000 && year <= 9999);
     }
-   
+    
     /**
     * Takes input of any M(D)-D(D)-YYYY format to set date.
     *
     * @param scan Scanner class for input
     */
     public void updateDate(Scanner scan){
-        boolean isInvalid = true;
-        while (isInvalid) {
+        boolean isInvalid = true; 
+        while (isInvalid) { 
             System.out.println("Please enter date (MM-DD-YY): ");
             String input = scan.nextLine();
             String[] date = input.split("-");
-           
+            
             //Checks for hyphen separation
             if (date.length == 3) {
-                int month = Integer.parseInt(date[0]);
-                int day = Integer.parseInt(date[1]);
-                int year = Integer.parseInt(date[2]);
-               
+                int month = Integer.parseInt(date[0]); 
+                int day = Integer.parseInt(date[1]); 
+                int year = Integer.parseInt(date[2]); 
+                
                 //Checks if valid date
-                if (isValidDate(month, day, year)) {
-                    currentMonth = month;
-                    currentDay = day;
-                    currentYear = year;
-                    System.out.println("Current date: " + currentMonth + "/" + currentDay + "/" + currentYear);
-                    isInvalid = false;
-                } else {
-                    System.out.println("Invalid date entered. Please try again.\n");
-                }
+                if (isValidDate(month, day, year)) { 
+                    currentMonth = month; 
+                    currentDay = day; 
+                    currentYear = year; 
+                    System.out.println("Current date: " + currentMonth + "/" + currentDay + "/" + currentYear); 
+                    isInvalid = false; 
+                } else { 
+                    System.out.println("Invalid date entered. Please try again.\n"); 
+                } 
             } else {
                 System.out.println("Must separate numbers with hyphens. Please try again.\n");
             }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
