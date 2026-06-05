@@ -37,20 +37,26 @@ public class Main
         //Sets the current date
         app.updateDate(scan);
         
-        System.out.println("Please select option: \n" +
-        "1\tAccount Menu\n" + "2\tSubscription Menu\n" + "3\tUpdate Date\n");
-        String input = scan.nextLine();
-        
-        while (!input.equals("1") && !input.equals("2") && !input.equals("3")){
-            System.out.println("INVALID option. Try again!");
-            input = scan.nextLine();
-        }
-        if (input.equals("1")){
-            app.accountMenu(scan); 
-        } else if (input.equals("2")){
-            //app.subscriptionMenu(scan);
-        } else if (input.equals("3")){
-            app.updateDate(scan);
+        boolean appOpen = true;
+        while (appOpen){
+            System.out.println("Please select option: \n" + "1\tAccount Menu\n" + 
+            "2\tSubscription Menu\n" + "3\tUpdate Date\n" + "4\tClose application\n");
+            String input = scan.nextLine();
+            
+            while (!input.equals("1") && !input.equals("2") && !input.equals("3") && !input.equals("4")){
+                System.out.println("INVALID option. Try again!");
+                input = scan.nextLine();
+            }
+            if (input.equals("1")){
+                app.accountMenu(scan); 
+            } else if (input.equals("2")){
+                //app.subscriptionMenu(scan);
+            } else if (input.equals("3")){
+                app.updateDate(scan);
+            } else if (input.equals("4")){
+                System.out.println("\n\nSee you next time!");
+                appOpen = false;
+            }
         }
         
     }
@@ -75,12 +81,28 @@ public class Main
                 System.out.println("\nNew Account");
                 System.out.println("Enter Service: ");
                 String newService = scan.nextLine();
+                while (newService.length() == 0)){
+                    System.out.println("Field cannot by empty.");
+                    newService = scan.nextLine();
+                }
                 System.out.println("Enter Username: ");
                 String newUser = scan.nextLine();
+                while (newUser.length() == 0)){
+                    System.out.println("Field cannot by empty.");
+                    newUser = scan.nextLine();
+                }
                 System.out.println("Enter Email or Phone: ");
                 String newEmail = scan.nextLine();
+                while (newUser.length() == 0)){
+                    System.out.println("Field cannot by empty.");
+                    newUser = scan.nextLine();
+                }
                 System.out.println("Enter Password: ");
                 String newPass = scan.nextLine();
+                while (newPass.length() == 0)){
+                    System.out.println("Field cannot by empty.");
+                    newPass = scan.nextLine();
+                }
                 
                 if(!manager.checkExistingAccount(newService, newEmail)){
                     Account newAccount = new Account(newService, newUser, newEmail, newPass);
@@ -128,11 +150,22 @@ public class Main
                     System.out.println((availableAccounts.size() + 1) + "\tBack to Account Menu");
                     System.out.println("Select service");
                     input = scan.nextLine();
-                    if (Integer.parseInt(input) > availableAccounts.size()){
-                        running = false;
-                    } else {
-                        viewAccountInfo(scan, availableAccounts.get((Integer.parseInt(input))-1));
+                    
+                    boolean valid = false;
+                    while (!valid){
+                        int maxOption = availableAccounts.size() + 1;
+                        for (int i = 1; i <= maxOption; i++){
+                            if (input.equals("" + i)){
+                                valid = true;
+                            }
+                        }
+                        
+                        if (!valid){
+                            System.out.println("Invalid option.");
+                            input = scan.nextLine();
+                        }
                     }
+                    viewAccountInfo(scan, availableAccounts.get((Integer.parseInt(input))-1));
                 }
                 
             } else if (input.equals("2")){
@@ -150,12 +183,21 @@ public class Main
                     }
                     System.out.println((availableAccounts.size() + 1) + "\tBack to Account Menu");
                     System.out.println("Select email/phone");
-                    input = scan.nextLine();
-                    if (Integer.parseInt(input) > availableAccounts.size()){
-                        running = false;
-                    } else {
-                        viewAccountInfo(scan, availableAccounts.get((Integer.parseInt(input))-1));
+                    boolean valid = false;
+                    while (!valid){
+                        int maxOption = availableAccounts.size() + 1;
+                        for (int i = 1; i <= maxOption; i++){
+                            if (input.equals("" + i)){
+                                valid = true;
+                            }
+                        }
+                        
+                        if (!valid){
+                            System.out.println("Invalid option.");
+                            input = scan.nextLine();
+                        }
                     }
+                    viewAccountInfo(scan, availableAccounts.get((Integer.parseInt(input))-1));
                 }
                 
             } else if (input.equals("3")){
@@ -181,7 +223,8 @@ public class Main
             "\n3\tChange Password" + "\n4\tDelete Account" + "\n5\tGo Back");
             
             String input = scan.nextLine();
-            while (!input.equals("1") && !input.equals("2") && !input.equals("3") && !input.equals("4") && !input.equals("4")){
+            while (!input.equals("1") && !input.equals("2") 
+            && !input.equals("3") && !input.equals("4") && !input.equals("5")){
                 System.out.println("INVALID option. Try again!");
                 input = scan.nextLine();
             }
@@ -255,7 +298,7 @@ public class Main
                     }
                 }
                 
-            } else if(input.equals("4")) {
+            } else if (input.equals("4")) {
                 System.out.println("Are you sure you want to delete? (yes/no)");
                 boolean answered = false;
                 while (!answered){
@@ -270,11 +313,10 @@ public class Main
                         System.out.println("Please answer yes or no");
                     }
                 }
-            } else if(input.equals("5")) {
+            } else if (input.equals("5")) {
                 viewing = false;
             }
         }
-        
     }
     
     public void subscriptionMenu(Scanner scan){
@@ -308,6 +350,7 @@ public class Main
             System.out.println("Please enter date (MM-DD-YY): ");
             String input = scan.nextLine();
             String[] date = input.split("-");
+            
             
             //Checks for hyphen separation
             if (date.length == 3) {
