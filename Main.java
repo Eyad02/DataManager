@@ -17,18 +17,18 @@ public class Main
         
         
         
-        //Temp account
-         Account avery = new Account("Costco", "averyl", "avery@gmail.com", "Av3ry_");
-         //Password testing
-         String myPassword = avery.generateStrongPassword();
-         System.out.println(myPassword);
+        // //Temp account
+        //  Account avery = new Account("Costco", "averyl", "avery@gmail.com", "Av3ry_");
+        //  //Password testing
+        //  String myPassword = avery.generateStrongPassword();
+        //  System.out.println(myPassword);
          
-        System.out.println(avery.accountInfo());
-        if (avery.checkStrength(avery.getPassword())){
-            System.out.println(avery.getPassword());
-        } else {
-            System.out.println(avery.generateStrongPassword());
-        }
+        // System.out.println(avery.accountInfo());
+        // if (avery.checkStrength(avery.getPassword())){
+        //     System.out.println(avery.getPassword());
+        // } else {
+        //     System.out.println(avery.generateStrongPassword());
+        // }
         
         
         
@@ -39,18 +39,17 @@ public class Main
         
         System.out.println("Please select option: \n" +
         "1\tAccount Menu\n" + "2\tSubscription Menu\n" + "3\tUpdate Date\n");
-        int input = scan.nextInt();
-        scan.nextLine();
+        String input = scan.nextLine();
         
-        while (input != 1 && input != 2 && input != 3){
+        while (!input.equals("1") && !input.equals("2") && !input.equals("3")){
             System.out.println("INVALID option. Try again!");
-            input = scan.nextInt();
+            input = scan.nextLine();
         }
-        if (input == 1){
+        if (input.equals("1")){
             app.accountMenu(scan); 
-        } else if (input == 2){
+        } else if (input.equals("2")){
             //app.subscriptionMenu(scan);
-        } else if (input == 3){
+        } else if (input.equals("3")){
             app.updateDate(scan);
         }
         
@@ -67,13 +66,12 @@ public class Main
             System.out.println("3 List Dashboard Reports");
             System.out.println("4 Return to Main Menu");
             
-            int input = scan.nextInt();
-            scan.nextLine();
-            while (input != 1 && input != 2 && input != 3 && input != 4){
+            String input = scan.nextLine();
+            while (!input.equals("1") && !input.equals("2") && !input.equals("3") && !input.equals("4")){
                 System.out.println("INVALID option. Try again!");
-                input = scan.nextInt();
+                input = scan.nextLine();
             }
-            if (input == 1){
+            if (input.equals("1")){
                 System.out.println("\nNew Account");
                 System.out.println("Enter Service: ");
                 String newService = scan.nextLine();
@@ -92,12 +90,12 @@ public class Main
                     System.out.println("Account with that email already exists!");
                 }
                  
-            } else if (input == 2){
+            } else if (input.equals("2")){
                 System.out.println("\n------------------");
                 searchUpdateDeleteMenu(scan);
-            } else if (input == 3){
+            } else if (input.equals("3")){
                 //Implement
-            } else if (input == 4){
+            } else if (input.equals("4")){
                 running = false;
             }
         }
@@ -121,18 +119,19 @@ public class Main
                 ArrayList<Account> availableAccounts = manager.listAccountsByEmail(emailInput);
                 if (availableAccounts.size() == 0){
                     System.out.println("No accounts found with that email/phone!");
+                    System.out.println("\nPress enter to continue\n");
+                    scan.nextLine();
                 } else {
                     for (int i = 0; i < availableAccounts.size(); i++){
                         System.out.println((i+1) + "\t" + availableAccounts.get(i).getServiceName());
                     }
-                    System.out.println((availableAccounts.size()) + "\tBack to Account Menu");
+                    System.out.println((availableAccounts.size() + 1) + "\tBack to Account Menu");
                     System.out.println("Select service");
-                    input = scan.nextInt();
-                    scan.nextLine();
-                    if (input > availableAccounts.size()){
+                    input = scan.nextLine();
+                    if (Integer.parseInt(input) > availableAccounts.size()){
                         running = false;
                     } else {
-                        viewAccountInfo(scan, availableAccounts.get(input-1));
+                        viewAccountInfo(scan, availableAccounts.get((Integer.parseInt(input))-1));
                     }
                 }
                 
@@ -151,20 +150,22 @@ public class Main
                     }
                     System.out.println((availableAccounts.size() + 1) + "\tBack to Account Menu");
                     System.out.println("Select email/phone");
-                    input = scan.nextInt();
-                    scan.nextLine();
-                    if (input > availableAccounts.size()){
+                    input = scan.nextLine();
+                    if (Integer.parseInt(input) > availableAccounts.size()){
                         running = false;
                     } else {
-                        viewAccountInfo(scan, availableAccounts.get(input-1));
+                        viewAccountInfo(scan, availableAccounts.get((Integer.parseInt(input))-1));
                     }
                 }
                 
-            } else if (input == 3){
+            } else if (input.equals("3")){
                 running = false;
+            } else {
+                System.out.println("Invalid input");
             }
         }
     }
+
     
     public void viewAccountInfo(Scanner scan, Account selectedAccount){
         boolean viewing = true;
@@ -179,39 +180,68 @@ public class Main
             "\n1\tChange Username" + "\n2\tChange Email/Phone" +
             "\n3\tChange Password" + "\n4\tDelete Account" + "\n5\tGo Back");
             
-            int input = scan.nextInt();
-            scan.nextLine();
+            String input = scan.nextLine();
+            while (!input.equals("1") && !input.equals("2") && !input.equals("3") && !input.equals("4") && !input.equals("4")){
+                System.out.println("INVALID option. Try again!");
+                input = scan.nextLine();
+            }
             
-            if(input == 1){
+            if(input.equals("1")){
                 System.out.println("Enter the new username: ");
-                selectedAccount.setUsername(scan.nextLine());
-                System.out.println("Success! Your username has been changed.");
-            } else if(input == 2) {
-                System.out.println("Enter the new email/phone: ");
-                selectedAccount.setEmail(scan.nextLine());
-                System.out.println("Success! Your email/phone number has been changed.");
-            } else if(input == 3){
+                String newUsername = scan.nextLine();
+                if (newUsername.length() > 0){
+                    selectedAccount.setUsername(newUsername);
+                    System.out.println("Success! Your username has been changed.");
+                    System.out.println("\nPress enter to continue\n");
+                    scan.nextLine();
+                } else {
+                    System.out.println("Username cannot be empty.");
+                }
                 
+            } else if(input.equals("2")) {
+                String newEmail = scan.nextLine();
+                if (newEmail.length() > 0){
+                    selectedAccount.setEmailOrPhone(newEmail);
+                    System.out.println("Success! Your email/phone number has been changed.");
+                    System.out.println("\nPress enter to continue\n");
+                    scan.nextLine();
+                } else {
+                    System.out.println("Email/phone cannot be empty.");
+                }
+                
+            } else if(input.equals("3")){
                 boolean isStrong = false;
                 while (!isStrong) {
-                    System.out.println("(E) \tEnter custom password \n(G) \tGenerate secure password: ");
+                    System.out.println("(E)\tEnter custom password\n(G)\tGenerate secure password\n(N)\tNevermind");
                     String choice = scan.nextLine();
                     if (choice.equalsIgnoreCase("E")){
-                        System.out.println("Please enter password." + "Must be at least 12 characters. "
+                        System.out.println("Please enter password." + "Must be at least 12 characters. " +
                         "Must have at least 1 upper case, lower case, number, and special character. ");
                         
                         String passInput = scan.nextLine();
                         if(selectedAccount.checkStrength(passInput)){
                             selectedAccount.setPassword(passInput);
                             System.out.println("Success! Your password has been changed.");
+                            System.out.println("\nPress enter to continue\n");
+                            scan.nextLine();
                             isStrong = true;
                         } else {
                                 System.out.println("Weak password. Are you sure to want to continue? (yes/no)");
-                                    String yesNo = scan.nextLine();
-                                    if (yesNo.equalsIgnoreCase("yes")) {
-                                        isStrong = true;
-                                    } else if (yesNo.equalsIgnoreCase("no")){
-                                        System.out.println("Please select option");
+                                    boolean answered = false;
+                                    while (!answered){
+                                        String yesNo = scan.nextLine();
+                                        if (yesNo.equalsIgnoreCase("yes")) {
+                                            selectedAccount.setPassword(passInput);
+                                            System.out.println("\nPress enter to continue\n");
+                                            scan.nextLine();
+                                            answered = true;
+                                            isStrong = true;
+                                        } else if (yesNo.equalsIgnoreCase("no")){
+                                            System.out.println("Please select option");
+                                            answered = true;
+                                        } else {
+                                            System.out.println("Please answer yes or no");
+                                        }
                                     }
                         }
                     } else if (choice.equalsIgnoreCase("G")) {
@@ -220,20 +250,27 @@ public class Main
                         selectedAccount.setPassword(generatedPass);
                         System.out.println("Success! Your new password is " + generatedPass);
                         isStrong = true;
+                    } else if (choice.equalsIgnoreCase("N")) {
+                        isStrong = true;
                     }
                 }
                 
-            } else if(input == 4) {
+            } else if(input.equals("4")) {
                 System.out.println("Are you sure you want to delete? (yes/no)");
-                String yesNo = scan.nextLine();
-                if (yesNo.equalsIgnoreCase("yes")) {
-                    manager.deleteAccount(selectedAccount);
-                    System.out.println("Account deleted successfully.");
-                    viewing = false;
-                } else if (yesNo.equalsIgnoreCase("no")){
-                    System.out.println("No changes made.");
+                boolean answered = false;
+                while (!answered){
+                    String yesNo = scan.nextLine();
+                    if (yesNo.equalsIgnoreCase("yes")) {
+                        manager.deleteAccount(selectedAccount);
+                        System.out.println("Account deleted successfully.");
+                        viewing = false;
+                    } else if (yesNo.equalsIgnoreCase("no")){
+                        System.out.println("No changes made.");
+                    } else {
+                        System.out.println("Please answer yes or no");
+                    }
                 }
-            } else if(input == 5) {
+            } else if(input.equals("5")) {
                 viewing = false;
             }
         }
