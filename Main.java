@@ -2,13 +2,16 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+* Main class for the account manager application.
+* Controls user interaction and navigation between menus and opening    .
+*/
 public class Main
 {
     private Manager manager = new Manager();
     private int currentMonth;
     private int currentDay;
     private int currentYear;
-    
     
     public static void main(String[] args)
     {   
@@ -33,6 +36,11 @@ public class Main
         
     }
     
+    /**
+     * Displays account menu to handle user selection
+     * 
+     * @param scan Scanner for user input
+     */
     public void accountMenu(Scanner scan){
         boolean running = true;
         
@@ -52,6 +60,7 @@ public class Main
                 String newEmail = getNonEmptyInput(scan, "Enter Email/Phone: ");
                 String newPass = getNonEmptyInput(scan, "Enter Password: ");
                 
+                // Collects account details and adds if no duplicate exists
                 if(!manager.checkExistingAccount(newService, newEmail)){
                     Account newAccount = new Account(newService, newUser, newEmail, newPass);
                     manager.addAccount(newAccount);
@@ -71,6 +80,12 @@ public class Main
         }
     }
     
+    /**
+     * Display search menu and allows user to find accounts
+     * by email/phone or service, then view, update, or delete them
+     * 
+     * @param scan Scanner for user input
+     */
     public void searchUpdateDeleteMenu(Scanner scan){
         boolean running = true;
         
@@ -100,6 +115,7 @@ public class Main
                     System.out.println((availableAccounts.size() + 1) + "\tBack to Account Menu");
                     System.out.println("Select service");
                     int chosen = getValidMenuChoice(scan, availableAccounts.size() + 1) - 1;
+                    // Last chance returns to menu, otherwise views selected account
                     if (chosen < availableAccounts.size()) {
                         viewAccountInfo(scan, availableAccounts.get(chosen));
                     } else {
@@ -109,7 +125,7 @@ public class Main
                 
             } else if (input == 2){
                 
-                //Lists accounts by service name
+                //Searches accounts matching by service name
                 System.out.println("Please enter name of service");
                 String serviceInput = scan.nextLine();
                 ArrayList<Account> availableAccounts = manager.listAccountsByService(serviceInput);
@@ -124,6 +140,7 @@ public class Main
                     System.out.println((availableAccounts.size() + 1) + "\tBack to Account Menu");
                     System.out.println("Select email/phone");
                     int chosen = getValidMenuChoice(scan, availableAccounts.size() + 1) - 1;
+                    // Last chance returns to menu, otherwise views selected account
                     if (chosen < availableAccounts.size()) {
                         viewAccountInfo(scan, availableAccounts.get(chosen));
                     } else {
@@ -137,6 +154,12 @@ public class Main
         }
     }
     
+    /**
+     * Display account detail and allows user to update or delete the account.
+     * 
+     * @param scan Scanner for user input
+     * @param selectedAccount Account object to modify
+     */
     public void viewAccountInfo(Scanner scan, Account selectedAccount){
         boolean viewing = true;
         
@@ -153,6 +176,7 @@ public class Main
             int input = getValidMenuChoice(scan, 5);
             
             if(input == 1){
+                //Searches accounts matching entered email/phone
                 String newUsername = getNonEmptyInput(scan, "Enter the new username: ");
                 selectedAccount.setUsername(newUsername);
                 System.out.println("Success! Your username has been changed.");
@@ -188,6 +212,7 @@ public class Main
                             scan.nextLine();
                             isStrong = true;
                         } else {
+                                // If password is weak, confirm if user wants to keep it anyway
                                 System.out.println("Weak password. Are you sure to want to continue? (yes/no)");
                                     boolean answered = false;
                                     while (!answered){
@@ -207,7 +232,7 @@ public class Main
                                     }
                         }
                     } else if (choice.equalsIgnoreCase("G")) {
-                        System.out.println("Generating secure password");
+                        // Generate and assign a password that satisfies checkStrength
                         String generatedPass = selectedAccount.generateStrongPassword();
                         selectedAccount.setPassword(generatedPass);
                         System.out.println("Success! Your new password is " + generatedPass);
@@ -218,6 +243,7 @@ public class Main
                 }
                 
             } else if (input == 4) {
+                // Confirm before permanently deleting account
                 System.out.println("Are you sure you want to delete? (yes/no)");
                 boolean answered = false;
                 while (!answered){
@@ -239,6 +265,11 @@ public class Main
         }
     }
     
+    /**
+     * Display security report menu and controls user selection.
+     * 
+     * @param scan Scanner for user input
+     */
     public void securityReportMenu(Scanner scan){
         boolean choosing = true;
         
@@ -260,6 +291,12 @@ public class Main
         }
     }
     
+    /**
+     * Displays all accounts with weak passwords and prompts user to choose one to update
+     * 
+     * @param scan Scanner for user input
+     * @param weakAccounts list of accounts with password that failed checkStrength
+     */
     public void printWeakPasswordReport(Scanner scan, ArrayList<Account> weakAccounts){
         System.out.println("\nAccounts with weak passwords\n----------");
         for (int i = 1; i <= weakAccounts.size(); i++){
@@ -268,33 +305,31 @@ public class Main
             "\n   Email/Phone: " + currAccount.getEmailOrPhone() + 
             "\n   Password: " + currAccount.getPassword() + "\n");
         }
+        System.out.println((weakAccounts.size() + 1) + "\tNo changes");
+    
+        int choice = getValidMenuChoice(scan, weakAccounts.size() + 1);
         
-        System.out.println("Would you like to change any? (Type 0 for no)");
-        int choice = -1;
-        while (choice < 0 || choice > weakAccounts.size()){
-            String choiceInput = scan.nextLine();
-            if (isAllNumericStringArray(new String[]{choiceInput})){
-                choice = Integer.parseInt(choiceInput);
-                if (choice < 0 || choice > weakAccounts.size()){
-                    System.out.println("Invalid option.");
-                }
-            } else {
-                System.out.println("Invalid option.");
-            }
-        }
-        if (choice != 0){
+        //Last option means no change, otherwise move to selected account
+        if (choice != weakAccounts.size() + 1){
             viewAccountInfo(scan, weakAccounts.get(choice - 1));
         }
         System.out.println("\nPress enter to continue");
         scan.nextLine();
     }
     
+    /**
+     * Prints all accounts with reused passwords along with their risk level.
+     * 
+     * @param scan Scanner for user input
+     * @param reusedAccounts list of accounts sharing a password with another account
+     */
     public void printReuseReport(Scanner scan, ArrayList<Account> reusedAccounts){
         System.out.println("\nAccounts with reused passwords\n----------");
         for (int i = 1; i <= reusedAccounts.size(); i++){
             Account currAccount = reusedAccounts.get(i - 1);
             int count = manager.getPasswordReuseCount(currAccount.getPassword());
             boolean sameService = manager.getSameServicePasswordMatch(currAccount.getPassword(), currAccount.getServiceName());
+            // Low risk if multiple accounts share same email (Likely external login)
             boolean sameEmail = manager.listAccountsByEmail(currAccount.getEmailOrPhone()).size() > 1;
             System.out.println(i + "\tService: " + currAccount.getServiceName() +
             "\n   Email/Phone: " + currAccount.getEmailOrPhone() +
@@ -305,6 +340,15 @@ public class Main
         scan.nextLine();
     }
     
+    /**
+     * Determines risk level of a reused password based on inter-email reuse,
+     * same service reuse, and total count reuse.
+     * 
+     * @param sameEmail true if other accounts with this password share the same email
+     * @param sameService true if another account on the same service uses this password
+     * @param count total number of accounts using this password
+     * @return String representing risk level
+     */
     public String getRiskLabel(boolean sameEmail, boolean sameService, int count){
         if (sameService && !sameEmail){
             return "CRITICAL";
@@ -319,6 +363,13 @@ public class Main
         }
     }
     
+    /**
+     * Continuously prompts user until a valid integer between 1 and maxOption is entered.
+     * 
+     * @param scan Scanner for user input
+     * @param maxOption maximum valid menu option
+     * @return valid integer selection
+     */
     public int getValidMenuChoice(Scanner scan, int maxOption){
         String input = scan.nextLine();
         boolean valid = false;
@@ -337,6 +388,13 @@ public class Main
         return Integer.parseInt(input);
     }
     
+    /**
+     * Continuously prompts user until a non-empty string is entered.
+     * 
+     * @param scan Scanner for user input
+     * @param prompt message to display to user
+     * @return non-empty string entered by user
+     */
     public String getNonEmptyInput(Scanner scan, String prompt){
         System.out.println(prompt);
         String input = scan.nextLine();
@@ -345,20 +403,6 @@ public class Main
             input = scan.nextLine();
         }
         return input;
-    }
-    
-    public boolean isAllNumericStringArray(String[] parts){
-        boolean noLetters = true;
-        for (int i = 0; i < parts.length; i++){
-            for (int j = 0; j < parts[i].length(); j++){
-                String c = parts[i].substring(j, j+1);
-                if ( !c.equals("0") && !c.equals("1") && !c.equals("2") && !c.equals("3") && !c.equals("4") &&
-                     !c.equals("5") && !c.equals("6") && !c.equals("7") && !c.equals("8") && !c.equals("9")){
-                    noLetters = false; 
-                }
-            }
-        }
-        return noLetters;
     }
     
 }
