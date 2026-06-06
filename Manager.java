@@ -30,7 +30,6 @@ public class Manager {
     }
    
     public ArrayList<Account> listAccountsByEmail(String target){
-        System.out.println("\nSearch results for " + target + "\n----------");
        
         ArrayList<Account> foundAccounts = new ArrayList<>();
         for (Account currAccount : accountsList){
@@ -42,7 +41,6 @@ public class Manager {
     }
    
     public ArrayList<Account> listAccountsByService(String target){
-        System.out.println("\nSearch results for " + target + "\n----------");
        
         ArrayList<Account> foundAccounts = new ArrayList<>();
         for (Account currAccount : accountsList){
@@ -52,4 +50,44 @@ public class Manager {
         }
         return foundAccounts;
     }
+   
+    public ArrayList<Account> getWeakPasswordAccounts(){
+        ArrayList<Account> weakAccounts = new ArrayList<>();
+       
+        for (Account currAccount : accountsList){
+            boolean isStrong = currAccount.checkStrength(currAccount.getPassword());
+            if (!isStrong){
+                weakAccounts.add(currAccount);
+            }
+        }
+        return weakAccounts;
+    }
+   
+    public ArrayList<Account> geReusedPasswordAccounts(){
+        ArrayList<Account> reusedAccounts = new ArrayList<>();
+       
+        for (int i = 0; i < accountsList.size(); i++){
+            for (int j = 0; j < accountsList.size(); j++){
+                if (i!=j){
+                    if (accountsList.get(i).getPassword().equals(accountsList.get(j).getPassword())){
+                        boolean alreadyAdded = false;
+                        for (int k = 0; k < reusedAccounts.size(); k++){
+                            if(reusedAccounts.get(k) == accountsList.get(i)){
+                                alreadyAdded = true;
+                            }
+                        }
+                       
+                        if (!alreadyAdded){
+                            reusedAccounts.add(accountsList.get(i));
+                        }
+                    }
+                }
+            }
+        }
+        return reusedAccounts;
+    }
+   
+   
+   
+   
 }
