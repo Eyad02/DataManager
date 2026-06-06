@@ -2,9 +2,9 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Manager {
-   
+    
     private ArrayList<Account> accountsList;
-   
+    
     public Manager() {
         accountsList = new ArrayList<Account>();
     }
@@ -12,11 +12,11 @@ public class Manager {
     public void addAccount(Account newAccount) {
         accountsList.add(newAccount);
     }
-   
+    
     public void deleteAccount(Account account) {
         accountsList.remove(account);
     }
-   
+    
     public boolean checkExistingAccount(String service, String email){
         boolean exists = false;
         for (Account currAccount : accountsList){
@@ -28,9 +28,9 @@ public class Manager {
         }
         return exists;
     }
-   
+    
     public ArrayList<Account> listAccountsByEmail(String target){
-       
+        
         ArrayList<Account> foundAccounts = new ArrayList<>();
         for (Account currAccount : accountsList){
             if (currAccount.getEmailOrPhone().equalsIgnoreCase(target)){
@@ -39,9 +39,9 @@ public class Manager {
         }
         return foundAccounts;
     }
-   
+    
     public ArrayList<Account> listAccountsByService(String target){
-       
+        
         ArrayList<Account> foundAccounts = new ArrayList<>();
         for (Account currAccount : accountsList){
             if (currAccount.getServiceName().equalsIgnoreCase(target)){
@@ -50,10 +50,10 @@ public class Manager {
         }
         return foundAccounts;
     }
-   
+    
     public ArrayList<Account> getWeakPasswordAccounts(){
         ArrayList<Account> weakAccounts = new ArrayList<>();
-       
+        
         for (Account currAccount : accountsList){
             boolean isStrong = currAccount.checkStrength(currAccount.getPassword());
             if (!isStrong){
@@ -62,10 +62,10 @@ public class Manager {
         }
         return weakAccounts;
     }
-   
-    public ArrayList<Account> geReusedPasswordAccounts(){
+    
+    public ArrayList<Account> getReusedPasswordAccounts(){
         ArrayList<Account> reusedAccounts = new ArrayList<>();
-       
+        
         for (int i = 0; i < accountsList.size(); i++){
             for (int j = 0; j < accountsList.size(); j++){
                 if (i!=j){
@@ -76,7 +76,7 @@ public class Manager {
                                 alreadyAdded = true;
                             }
                         }
-                       
+                        
                         if (!alreadyAdded){
                             reusedAccounts.add(accountsList.get(i));
                         }
@@ -86,8 +86,27 @@ public class Manager {
         }
         return reusedAccounts;
     }
-   
-   
-   
-   
+    
+    public int getPasswordReuseCount(String password){
+        int count = 0;
+        for (int i = 0; i < accountsList.size(); i++){
+            if (accountsList.get(i).getPassword().equals(password)){
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    public boolean getSameServicePasswordMatch(String password, String service){
+        int count = 0;
+        for (int i = 0; i < accountsList.size(); i++){
+            if (accountsList.get(i).getPassword().equals(password) &&
+                accountsList.get(i).getServiceName().equalsIgnoreCase(service)){
+                count++;
+            }
+        }
+        return count > 1;
+    }
+    
+    
 }
